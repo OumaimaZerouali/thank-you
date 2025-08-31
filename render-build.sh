@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-echo "Generating Angular environment.prod.ts file..."
+echo "Generating Angular environment.production.ts file..."
 
-cat > src/environments/environment.prod.ts <<EOL
+cat > src/environments/environment.production.ts <<EOL
 export const environment = {
   production: true,
   environment: 'production',
