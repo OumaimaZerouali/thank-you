@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: thank-you-mailhog
+    ports:
+      - "1026:1025"
+      - "8025:8025"
+    environment:
+      - MH_STORAGE=memory
+      - MH_SMTP_BIND_ADDR=0.0.0.0:1025
+      - MH_UI_BIND_ADDR=0.0.0.0:8025
+      - MH_API_BIND_ADDR=0.0.0.0:8025
+    networks:
+      - thank-you-network
+
+  mongo:
+    image: mongo:5
+    container_name: thank-you-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - thank-you-network
+
+volumes:
+  mongo_data:
+
+networks:
+  thank-you-network:
+    driver: bridge

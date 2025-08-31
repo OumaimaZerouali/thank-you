@@ -1,0 +1,42 @@
+.dark-mode-toggle {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  background: #f8f9fa;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 32px;
+  line-height: 1;
+
+  &:hover {
+    background: #e9ecef;
+    border-color: #dee2e6;
+    transform: translateY(-1px);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Dark mode adjustments
+body.dark-mode .dark-mode-toggle {
+  background: #4a5568;
+  border-color: #718096;
+  color: #e2e8f0;
+
+  &:hover {
+    background: #718096;
+    border-color: #a0aec0;
+  }
+}

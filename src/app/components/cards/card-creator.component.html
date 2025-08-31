@@ -1,0 +1,181 @@
+<div class="card-creator">
+  <div class="creator-header">
+    <h1>Create Your Card</h1>
+    <p>Design and send a personalized card in 3 simple steps</p>
+  </div>
+
+  <div class="stepper">
+    <div class="step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1" (click)="setStep(1)">
+      <div class="step-number">1</div>
+      <span class="step-title">Content</span>
+    </div>
+    <div class="step-line" [class.completed]="currentStep > 1"></div>
+    <div class="step" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2" (click)="setStep(2)">
+      <div class="step-number">2</div>
+      <span class="step-title">Style</span>
+    </div>
+    <div class="step-line" [class.completed]="currentStep > 2"></div>
+    <div class="step" [class.active]="currentStep >= 3" (click)="setStep(3)">
+      <div class="step-number">3</div>
+      <span class="step-title">Send</span>
+    </div>
+  </div>
+
+  <div class="creator-layout">
+    <div class="form-panel">
+      @if (currentStep === 1) {
+        <div class="step-content">
+          <h2>What's your message?</h2>
+
+          <div class="form-group">
+            <label>Card Type</label>
+            <select [(ngModel)]="cardData.cardType" name="cardType" (change)="onCardTypeChange()">
+              @for (type of cardTypes; track type) {
+                <option [value]="type.value">{{ type.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>To</label>
+              <input type="text" [(ngModel)]="cardData.recipientName" name="recipientName" placeholder="Recipient name" />
+            </div>
+            <div class="form-group">
+              <label>From</label>
+              <input type="text" [(ngModel)]="cardData.senderName" name="senderName" placeholder="Your name" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Message</label>
+            <textarea [(ngModel)]="cardData.message" name="message" rows="4" placeholder="Write your heartfelt message..."></textarea>
+          </div>
+
+          <div class="step-navigation">
+            <button type="button" (click)="nextStep()" class="btn-next">
+              Next: Style →
+            </button>
+          </div>
+        </div>
+      } @else if (currentStep === 2) {
+        <div class="step-content">
+          <h2>Make it beautiful</h2>
+
+          <div class="style-grid">
+            <div class="form-group">
+              <label>Background</label>
+              <select [(ngModel)]="cardData.backgroundColor" name="backgroundColor">
+                <option *ngFor="let color of backgroundColors" [value]="color.value">{{ color.name }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Text Color</label>
+              <select [(ngModel)]="cardData.textColor" name="textColor">
+                <option *ngFor="let color of textColors" [value]="color.value">{{ color.name }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Card Style</label>
+              <select [(ngModel)]="cardData.cardStyle" name="cardStyle">
+                <option *ngFor="let style of cardStyles" [value]="style.value">{{ style.name }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Border Color</label>
+              <input type="color" [(ngModel)]="cardData.borderColor" name="borderColor" class="color-input" />
+            </div>
+
+            <div class="form-group">
+              <label>Font</label>
+              <select [(ngModel)]="cardData.fontFamily" name="fontFamily">
+                <option *ngFor="let font of fontFamilies" [value]="font.value">{{ font.name }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Pattern</label>
+              <select [(ngModel)]="cardData.pattern" name="pattern">
+                <option *ngFor="let pattern of patterns" [value]="pattern.value">{{ pattern.name }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="step-navigation">
+            <button type="button" (click)="prevStep()" class="btn-prev">
+              ← Back
+            </button>
+            <button type="button" (click)="nextStep()" class="btn-next">
+              Next: Send →
+            </button>
+          </div>
+        </div>
+      } @else if (currentStep === 3) {
+        <div class="step-content">
+          <h2>🚀 Ready to send?</h2>
+
+          <div class="form-group">
+            <label>Recipient Email</label>
+            <input type="email" [(ngModel)]="recipientEmail" name="recipientEmail" placeholder="recipient@example.com" />
+            <small>Enter an email to send the card directly</small>
+          </div>
+
+          <div class="action-buttons">
+            <button type="button" (click)="createCard()" [disabled]="saving" class="btn-save">
+              {{ saving ? 'Saving...' : '💾 Save Card' }}
+            </button>
+            <button type="button" (click)="sendCard()" [disabled]="sending || !recipientEmail" class="btn-send">
+              {{ sending ? 'Sending...' : '📧 Send Card' }}
+            </button>
+          </div>
+
+          <div class="step-navigation">
+            <button type="button" (click)="prevStep()" class="btn-prev">
+              ← Back to Style
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="preview-panel">
+      <h3>Preview</h3>
+      <div class="card-preview"
+           [style.background-color]="cardData.backgroundColor"
+           [style.color]="cardData.textColor"
+           [style.font-family]="cardData.fontFamily"
+           [style.border-color]="cardData.borderColor"
+           [class]="'card-style-' + cardData.cardStyle + ' pattern-' + cardData.pattern">
+
+        <div class="card-header">
+          <h4>{{ getCardTypeName() }}</h4>
+        </div>
+
+        <div class="card-body">
+          <p class="greeting">Dear {{ cardData.recipientName || 'Friend' }},</p>
+          <p class="message">{{ cardData.message || 'Your message will appear here...' }}</p>
+          <p class="signature">
+            <span *ngIf="cardData.cardType === 'thank-you'">With gratitude,</span>
+            <span *ngIf="cardData.cardType === 'payment-request'">Best regards,</span>
+            <span *ngIf="cardData.cardType === 'condolence'">With sympathy,</span>
+            <span *ngIf="cardData.cardType === 'baby'">With love,</span>
+            <span *ngIf="cardData.cardType === 'wedding'">With best wishes,</span>
+            <span *ngIf="cardData.cardType === 'birthday'">Happy Birthday from,</span>
+            <span *ngIf="cardData.cardType === 'get-well'">Get well soon from,</span>
+            <span *ngIf="cardData.cardType === 'apology'">Sincerely,</span>
+            <br>{{ cardData.senderName || 'Your Name' }}
+          </p>
+        </div>
+      </div>
+
+      @if (recipientEmail && currentStep === 3) {
+        <div class="email-info">
+          <p>Ready to send to: <strong>{{ recipientEmail }}</strong></p>
+        </div>
+      }
+    </div>
+  </div>
+</div>

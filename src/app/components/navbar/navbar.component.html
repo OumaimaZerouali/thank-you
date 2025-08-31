@@ -1,0 +1,26 @@
+<nav class="navbar">
+  <div class="navbar-brand">
+    <h1>Thank You Cards</h1>
+  </div>
+
+  <div class="navbar-tabs">
+    <button
+      (click)="selectTab('create')"
+      [class.active]="selectedTab === 'create'"
+      class="tab-button">
+      <span class="tab-icon">✨</span>
+      Create Card
+    </button>
+    <button
+      (click)="selectTab('list')"
+      [class.active]="selectedTab === 'list'"
+      class="tab-button">
+      <span class="tab-icon">📋</span>
+      My Cards
+    </button>
+  </div>
+
+  <div class="navbar-actions">
+    <app-dark-mode-toggle></app-dark-mode-toggle>
+  </div>
+</nav>
