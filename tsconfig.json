@@ -14,28 +14,14 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Path mapping */
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@components/*": ["./src/components/*"],
-      "@services/*": ["./src/services/*"],
-      "@types/*": ["./src/types/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@config/*": ["./src/config/*"]
-    },
-
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "src",
-    "vite.config.ts"
+    "react-version/src"
   ],
   "references": [{ "path": "./tsconfig.node.json"}]
 }
