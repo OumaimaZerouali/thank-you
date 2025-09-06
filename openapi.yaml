@@ -1,0 +1,620 @@
+openapi: 3.0.3
+info:
+  title: SmilePost Cards API
+  description: API for managing and sending cards
+  version: 1.0.0
+  contact:
+    name: SmilePost Cards API Support
+    email: support@smilepost.local
+
+servers:
+  - url: http://localhost:3000/api
+    description: Development server
+  - url: https://thankyoucards.com/api
+    description: Production server
+
+paths:
+  /cards:
+    get:
+      summary: Get all cards
+      description: Retrieve all cards for the current user
+      operationId: getCards
+      parameters:
+        - name: sent
+          in: query
+          description: Filter by sent status
+          required: false
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          description: Maximum number of cards to return
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - name: offset
+          in: query
+          description: Number of cards to skip
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Successfully retrieved cards
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Card'
+                  total:
+                    type: integer
+                    description: Total number of cards
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      summary: Create a new card
+      description: Create and save a new thank you card
+      operationId: createCard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardInput'
+      responses:
+        '201':
+          description: Card created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Card'
+                  message:
+                    type: string
+                    example: "Card created successfully"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /cards/{cardId}:
+    get:
+      summary: Get a specific card
+      description: Retrieve a card by its ID
+      operationId: getCard
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          description: The ID of the card to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved card
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Card'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    put:
+      summary: Update a card
+      description: Update an existing card
+      operationId: updateCard
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          description: The ID of the card to update
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardUpdate'
+      responses:
+        '200':
+          description: Card updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/Card'
+                  message:
+                    type: string
+                    example: "Card updated successfully"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    delete:
+      summary: Delete a card
+      description: Delete a card by its ID
+      operationId: deleteCard
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          description: The ID of the card to delete
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Card deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Card deleted successfully"
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /cards/{cardId}/send:
+    post:
+      summary: Send a card via email
+      description: Send a card to the specified recipient via email
+      operationId: sendCard
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          description: The ID of the card to send
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Card sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      messageId:
+                        type: string
+                        description: Email message ID
+                      sentAt:
+                        type: string
+                        format: date-time
+                        description: Timestamp when the card was sent
+                  message:
+                    type: string
+                    example: "Card sent successfully"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /email/send:
+    post:
+      summary: Send custom email
+      description: Send a custom email with card data
+      operationId: sendEmail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailRequest'
+      responses:
+        '200':
+          description: Email sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmailResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /health:
+    get:
+      summary: Health check
+      description: Check if the API is running and healthy
+      operationId: healthCheck
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+                  timestamp:
+                    type: string
+                    format: date-time
+                  version:
+                    type: string
+                    example: "1.0.0"
+
+components:
+  schemas:
+    Card:
+      type: object
+      required:
+        - id
+        - cardType
+        - recipientName
+        - recipientEmail
+        - senderName
+        - message
+        - backgroundColor
+        - textColor
+        - borderColor
+        - fontFamily
+        - fontSize
+        - pattern
+        - createdAt
+        - updatedAt
+        - isSent
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the card
+          example: "card_1693929600000_abc123def"
+        cardType:
+          $ref: '#/components/schemas/CardType'
+        recipientName:
+          type: string
+          description: Name of the card recipient
+          example: "John Doe"
+          maxLength: 100
+        recipientEmail:
+          type: string
+          format: email
+          description: Email address of the recipient
+          example: "john.doe@example.com"
+        senderName:
+          type: string
+          description: Name of the card sender
+          example: "Jane Smith"
+          maxLength: 100
+        message:
+          type: string
+          description: Message content of the card
+          example: "Thank you for your help with the project!"
+          maxLength: 1000
+        backgroundColor:
+          type: string
+          description: Background color of the card (hex color)
+          example: "#ffffff"
+          pattern: "^#[0-9A-Fa-f]{6}$"
+        textColor:
+          type: string
+          description: Text color of the card (hex color)
+          example: "#333333"
+          pattern: "^#[0-9A-Fa-f]{6}$"
+        borderColor:
+          type: string
+          description: Border color of the card (hex color)
+          example: "#e91e63"
+          pattern: "^#[0-9A-Fa-f]{6}$"
+        fontFamily:
+          type: string
+          description: Font family for the card text
+          example: "Arial"
+          enum: ["Arial", "Georgia", "Times New Roman", "Helvetica", "Comic Sans MS", "Courier New", "Verdana"]
+        fontSize:
+          type: string
+          description: Font size for the card text
+          example: "16px"
+          enum: ["12px", "14px", "16px", "18px", "20px", "24px", "28px", "32px"]
+        pattern:
+          $ref: '#/components/schemas/PatternType'
+        imageUrl:
+          type: string
+          format: uri
+          description: URL of an optional image for the card
+          example: "https://example.com/images/card-image.jpg"
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the card was created
+          example: "2023-09-05T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the card was last updated
+          example: "2023-09-05T10:30:00Z"
+        isSent:
+          type: boolean
+          description: Whether the card has been sent via email
+          example: false
+
+    CardInput:
+      type: object
+      required:
+        - cardType
+        - recipientName
+        - recipientEmail
+        - senderName
+        - message
+        - backgroundColor
+        - textColor
+        - borderColor
+        - fontFamily
+        - fontSize
+        - pattern
+      properties:
+        cardType:
+          $ref: '#/components/schemas/CardType'
+        recipientName:
+          type: string
+          maxLength: 100
+          example: "John Doe"
+        recipientEmail:
+          type: string
+          format: email
+          example: "john.doe@example.com"
+        senderName:
+          type: string
+          maxLength: 100
+          example: "Jane Smith"
+        message:
+          type: string
+          maxLength: 1000
+          example: "Thank you for your help with the project!"
+        backgroundColor:
+          type: string
+          pattern: "^#[0-9A-Fa-f]{6}$"
+          example: "#ffffff"
+        textColor:
+          type: string
+          pattern: "^#[0-9A-Fa-f]{6}$"
+          example: "#333333"
+        borderColor:
+          type: string
+          pattern: "^#[0-9A-Fa-f]{6}$"
+          example: "#e91e63"
+        fontFamily:
+          type: string
+          enum: ["Arial", "Georgia", "Times New Roman", "Helvetica", "Comic Sans MS", "Courier New", "Verdana"]
+          example: "Arial"
+        fontSize:
+          type: string
+          enum: ["12px", "14px", "16px", "18px", "20px", "24px", "28px", "32px"]
+          example: "16px"
+        pattern:
+          $ref: '#/components/schemas/PatternType'
+        imageUrl:
+          type: string
+          format: uri
+          example: "https://example.com/images/card-image.jpg"
+
+    CardUpdate:
+      type: object
+      properties:
+        cardType:
+          $ref: '#/components/schemas/CardType'
+        recipientName:
+          type: string
+          maxLength: 100
+        recipientEmail:
+          type: string
+          format: email
+        senderName:
+          type: string
+          maxLength: 100
+        message:
+          type: string
+          maxLength: 1000
+        backgroundColor:
+          type: string
+          pattern: "^#[0-9A-Fa-f]{6}$"
+        textColor:
+          type: string
+          pattern: "^#[0-9A-Fa-f]{6}$"
+        borderColor:
+          type: string
+          pattern: "^#[0-9A-Fa-f]{6}$"
+        fontFamily:
+          type: string
+          enum: ["Arial", "Georgia", "Times New Roman", "Helvetica", "Comic Sans MS", "Courier New", "Verdana"]
+        fontSize:
+          type: string
+          enum: ["12px", "14px", "16px", "18px", "20px", "24px", "28px", "32px"]
+        pattern:
+          $ref: '#/components/schemas/PatternType'
+        imageUrl:
+          type: string
+          format: uri
+
+    CardType:
+      type: string
+      description: Type of the card
+      enum: ["thank-you", "birthday", "congratulations", "get-well", "holiday", "custom"]
+      example: "thank-you"
+
+    PatternType:
+      type: string
+      description: Pattern for the card background
+      enum: ["none", "dots", "stripes", "hearts", "stars", "flowers"]
+      example: "none"
+
+    EmailRequest:
+      type: object
+      required:
+        - to
+        - subject
+        - html
+        - cardData
+      properties:
+        to:
+          type: string
+          format: email
+          description: Recipient email address
+          example: "recipient@example.com"
+        subject:
+          type: string
+          description: Email subject
+          example: "Thank You from Jane Smith"
+          maxLength: 200
+        html:
+          type: string
+          description: HTML content of the email
+        cardData:
+          $ref: '#/components/schemas/Card'
+
+    EmailResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        messageId:
+          type: string
+          description: Email message ID
+          example: "msg_abc123def456"
+        message:
+          type: string
+          example: "Email sent successfully"
+
+    Error:
+      type: object
+      required:
+        - success
+        - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
+          example: "Invalid request parameters"
+        code:
+          type: string
+          description: Error code
+          example: "VALIDATION_ERROR"
+        details:
+          type: object
+          description: Additional error details
+
+    ValidationError:
+      type: object
+      required:
+        - success
+        - error
+        - validationErrors
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: "Validation failed"
+        validationErrors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: "recipientEmail"
+              message:
+                type: string
+                example: "Please enter a valid email address"
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for authentication
+
+security:
+  - ApiKeyAuth: []
