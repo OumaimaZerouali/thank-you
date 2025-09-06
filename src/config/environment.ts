@@ -58,13 +58,13 @@ export const environment: EnvironmentConfig = {
   apiUrl: getEnvVar('VITE_API_URL', 'http://localhost:3000/api'),
   emailServiceUrl: getEnvVar('VITE_EMAIL_SERVICE_URL', 'http://localhost:3000/api'),
   firebaseConfig: {
-    apiKey: getEnvVar('VITE_FIREBASE_API_KEY', 'AIzaSyBCOkGntwzFvl-COBev9CXoVN9Rhsomk-s'),
-    authDomain: getEnvVar('VITE_FIREBASE_AUTH_DOMAIN', 'thankyou-f7585.firebaseapp.com'),
-    projectId: getEnvVar('VITE_FIREBASE_PROJECT_ID', 'thankyou-f7585'),
-    storageBucket: getEnvVar('VITE_FIREBASE_STORAGE_BUCKET', 'thankyou-f7585.firebasestorage.app'),
-    messagingSenderId: getEnvVar('VITE_FIREBASE_MESSAGING_SENDER_ID', '731936075341'),
-    appId: getEnvVar('VITE_FIREBASE_APP_ID', '1:731936075341:web:a4b258ba9c529f0b567604'),
-    measurementId: getEnvVar('VITE_FIREBASE_MEASUREMENT_ID', 'G-3C9WKNW0K4')
+    apiKey: getEnvVar('VITE_FIREBASE_API_KEY'),
+    authDomain: getEnvVar('VITE_FIREBASE_AUTH_DOMAIN'),
+    projectId: getEnvVar('VITE_FIREBASE_PROJECT_ID'),
+    storageBucket: getEnvVar('VITE_FIREBASE_STORAGE_BUCKET'),
+    messagingSenderId: getEnvVar('VITE_FIREBASE_MESSAGING_SENDER_ID'),
+    appId: getEnvVar('VITE_FIREBASE_APP_ID'),
+    measurementId: getEnvVar('VITE_FIREBASE_MEASUREMENT_ID')
   },
   emailConfig: {
     smtpHost: getEnvVar('SMTP_HOST', 'localhost'),
