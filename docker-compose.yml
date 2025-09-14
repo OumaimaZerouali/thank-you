@@ -15,21 +15,45 @@ services:
     networks:
       - thank-you-network
 
-  mongo:
-    image: mongo:5
-    container_name: thank-you-mongo
+  postgres:
+    image: postgres:15
+    container_name: thank-you-postgres
     ports:
-      - "27017:27017"
+      - "5432:5432"
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=password
+      - POSTGRES_DB=thankyoucards
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
     volumes:
-      - mongo_data:/data/db
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - thank-you-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d thankyoucards"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: thank-you-pgadmin
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@thankyoucards.local
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - thank-you-network
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
-  mongo_data:
+  postgres_data:
+  pgadmin_data:
 
 networks:
   thank-you-network:

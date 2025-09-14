@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "prompt": {
+    "languages": {
+      "java": {
+        "style": "Use Clean Architecture. Organize code into 'adapter', 'domain', and 'usecase' packages. Prioritize dependency inversion. Follow a Contract-First approach: define OpenAPI contracts before implementing code. For tests, follow Given-When-Then style with clear Arrange-Act-Assert separation."
+      },
+      "typescript": {
+        "style": "For React, prefer functional components with hooks (no class components). Use clean, modular code with separation of concerns. Follow atomic design principles for UI components where possible."
+      },
+      "javascript": {
+        "style": "Same as TypeScript: prefer React functional components with hooks, clean modular structure, and atomic design principles."
+      }
+    },
+    "style": "Be concise, follow best practices, and generate production-ready code."
+  }
+}

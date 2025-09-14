@@ -3,14 +3,13 @@ interface EnvironmentConfig {
   environment: string;
   apiUrl: string;
   emailServiceUrl: string;
-  firebaseConfig: {
-    apiKey: string;
-    authDomain: string;
-    projectId: string;
-    storageBucket: string;
-    messagingSenderId: string;
-    appId: string;
-    measurementId: string;
+  database: {
+    useLocal: boolean;
+    url?: string;
+  };
+  supabaseConfig: {
+    url: string;
+    anonKey: string;
   };
   emailConfig: {
     smtpHost: string;
@@ -54,33 +53,32 @@ const getNumberEnvVar = (key: string, defaultValue: number): number => {
 
 export const environment: EnvironmentConfig = {
   production: import.meta.env.PROD,
-  environment: getEnvVar('NODE_ENV', 'development'),
-  apiUrl: getEnvVar('VITE_API_URL', 'http://localhost:3000/api'),
-  emailServiceUrl: getEnvVar('VITE_EMAIL_SERVICE_URL', 'http://localhost:3000/api'),
-  firebaseConfig: {
-    apiKey: getEnvVar('VITE_FIREBASE_API_KEY'),
-    authDomain: getEnvVar('VITE_FIREBASE_AUTH_DOMAIN'),
-    projectId: getEnvVar('VITE_FIREBASE_PROJECT_ID'),
-    storageBucket: getEnvVar('VITE_FIREBASE_STORAGE_BUCKET'),
-    messagingSenderId: getEnvVar('VITE_FIREBASE_MESSAGING_SENDER_ID'),
-    appId: getEnvVar('VITE_FIREBASE_APP_ID'),
-    measurementId: getEnvVar('VITE_FIREBASE_MEASUREMENT_ID')
+  environment: getEnvVar('VITE_NODE_ENV', 'development'),
+  apiUrl: getEnvVar('VITE_API_URL', 'http://localhost:3001'),
+  emailServiceUrl: getEnvVar('VITE_EMAIL_SERVICE_URL', 'http://localhost:3002'),
+  database: {
+    useLocal: getBooleanEnvVar('VITE_USE_LOCAL_DB', false),
+    url: getEnvVar('VITE_DATABASE_URL', ''),
+  },
+  supabaseConfig: {
+    url: getEnvVar('VITE_SUPABASE_URL'),
+    anonKey: getEnvVar('VITE_SUPABASE_ANON_KEY'),
   },
   emailConfig: {
-    smtpHost: getEnvVar('SMTP_HOST', 'localhost'),
-    smtpPort: getNumberEnvVar('SMTP_PORT', 1026),
-    mailhogWebUrl: getEnvVar('MAILHOG_WEB_URL', 'http://localhost:8025'),
-    fromEmail: getEnvVar('FROM_EMAIL', 'noreply@thankyoucards.local'),
-    fromName: getEnvVar('FROM_NAME', 'Thank You Cards (Dev)')
+    smtpHost: getEnvVar('VITE_SMTP_HOST', 'localhost'),
+    smtpPort: getNumberEnvVar('VITE_SMTP_PORT', 1025),
+    mailhogWebUrl: getEnvVar('VITE_MAILHOG_WEB_URL', 'http://localhost:8025'),
+    fromEmail: getEnvVar('VITE_FROM_EMAIL', 'noreply@thankyoucards.app'),
+    fromName: getEnvVar('VITE_FROM_NAME', 'Thank You Cards App'),
   },
   features: {
     enableAnalytics: getBooleanEnvVar('VITE_ENABLE_ANALYTICS', false),
     enableErrorReporting: getBooleanEnvVar('VITE_ENABLE_ERROR_REPORTING', false),
-    enableDebugMode: getBooleanEnvVar('DEBUG_MODE', true),
-    enableEmailTesting: getBooleanEnvVar('VITE_ENABLE_EMAIL_TESTING', true)
+    enableDebugMode: getBooleanEnvVar('VITE_ENABLE_DEBUG_MODE', true),
+    enableEmailTesting: getBooleanEnvVar('VITE_ENABLE_EMAIL_TESTING', true),
   },
   logging: {
-    level: getEnvVar('VITE_LOG_LEVEL', 'debug'),
-    enableConsoleLogging: getBooleanEnvVar('CONSOLE_LOGGING', true)
-  }
+    level: getEnvVar('VITE_LOG_LEVEL', 'info'),
+    enableConsoleLogging: getBooleanEnvVar('VITE_ENABLE_CONSOLE_LOGGING', true),
+  },
 };

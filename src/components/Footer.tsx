@@ -31,7 +31,7 @@ export function Footer() {
             SmilePost Team
           </p>
           <p className="mt-2">
-            © {new Date().getFullYear()} CardCraft. All rights reserved.
+            © {new Date().getFullYear()} SmilePost. All rights reserved.
           </p>
         </div>
       </div>

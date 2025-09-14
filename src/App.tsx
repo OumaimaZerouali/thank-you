@@ -2,6 +2,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LandingPage } from './components/LandingPage';
 import { CardBuilder } from './components/CardBuilder/CardBuilder';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 export function App() {
@@ -11,7 +12,14 @@ export function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/create" element={<CardBuilder />} />
+            <Route
+              path="/create"
+              element={
+                <ProtectedRoute>
+                  <CardBuilder />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </main>
         <Footer />

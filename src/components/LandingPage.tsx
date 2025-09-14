@@ -26,6 +26,7 @@ export function LandingPage() {
           </div>
         </div>
       </section>
+
       {/* Features Section */}
       <section className="py-16 bg-white px-4">
         <div className="container mx-auto">
@@ -66,6 +67,7 @@ export function LandingPage() {
           </div>
         </div>
       </section>
+
       {/* Call to Action */}
       <section className="py-20 bg-gradient-to-r from-purple-600 to-blue-500 text-white px-4">
         <div className="container mx-auto text-center">
